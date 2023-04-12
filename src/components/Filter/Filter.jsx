@@ -4,7 +4,7 @@ export default function Filter({ currentFilter, onFilterInputChange }) {
   return (
     <Input
       type="text"
-      placeholder="Find by name"
+      placeholder="Filter by name"
       value={currentFilter}
       onChange={onFilterInputChange}
     />
