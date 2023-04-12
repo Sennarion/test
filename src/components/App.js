@@ -1,35 +1,26 @@
-import { useState, useEffect } from 'react';
-import { GlobalStyleComponent } from 'styles/GlobalStyles.styled';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from 'redux/products/operations';
+import { selectIsLoading, selectError } from 'redux/products/selectors';
 import { Container, Filter, ProductsList } from 'components';
-import getProducts from 'services/mockApi';
+import { GlobalStyleComponent } from 'styles/GlobalStyles.styled';
 
 export default function App() {
-  const [products, setProducts] = useState([]);
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
   useEffect(() => {
-    getProducts()
-      .then(data => setProducts(data))
-      .catch(error =>
-        console.error(`Whooops... Something went wrong. ${error.message}`)
-      );
-  }, []);
-
-  const onFilterInputChange = e => {
-    setFilter(e.target.value);
-  };
-
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().trim().includes(filter.toLowerCase().trim())
-  );
+    dispatch(getProducts());
+  }, [dispatch]);
 
   return (
     <Container>
-      <Filter
-        currentFilter={filter}
-        onFilterInputChange={onFilterInputChange}
-      />
-      {products.length > 0 && <ProductsList products={filteredProducts} />}
+      <Filter />
+      <ProductsList />
+      {isLoading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
       <GlobalStyleComponent />
     </Container>
   );
